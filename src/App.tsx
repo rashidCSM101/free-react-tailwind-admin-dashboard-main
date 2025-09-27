@@ -18,6 +18,7 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import Clients from "./pages/Clients";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
+            <Route path="/clients" element={<Clients />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
@@ -58,6 +60,7 @@ export default function App() {
           <Route path="/signup" element={<SignUp />} />
 
           {/* Fallback Route */}
+          <Route path="/error-404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

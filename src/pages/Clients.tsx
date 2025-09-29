@@ -149,95 +149,95 @@ export default function Clients() {
 
       <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+          <table className="w-full table-auto divide-y divide-gray-200 dark:divide-gray-800">
             <thead className="bg-gray-50 dark:bg-white/5">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
-                <th scope="col" className="px-6 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider">API Key</th>
-                <th scope="col" className="px-6 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider">API Token</th>
-                <th scope="col" className="px-6 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                <th scope="col" className="px-6 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider">Updated At</th>
-                <th scope="col" className="px-6 py-3 text-right text-theme-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th scope="col" className="px-3 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                <th scope="col" className="px-3 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider">API Key</th>
+                <th scope="col" className="px-3 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">API Token</th>
+                <th scope="col" className="px-3 py-3 text-left text-theme-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Created At</th>
+                <th scope="col" className="px-3 py-3 text-right text-theme-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
               {clients.map((client) => (
                 <tr key={client.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {editingId === client.id && editDraft ? (
                       <input
                         type="text"
                         value={editDraft.full_name}
                         onChange={(e) => setEditDraft((s) => (s ? { ...s, full_name: e.target.value } : s))}
-                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent px-2 py-1 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
                       />
                     ) : (
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">{client.full_name}</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white truncate" title={client.full_name}>{client.full_name}</div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
                     {editingId === client.id && editDraft ? (
                       <input
                         type="text"
                         value={editDraft.api_key}
                         onChange={(e) => setEditDraft((s) => (s ? { ...s, api_key: e.target.value } : s))}
-                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent px-2 py-1 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
                       />
                     ) : (
-                      <div className="text-sm text-gray-600 dark:text-gray-300">{client.api_key}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300 font-mono truncate" title={client.api_key}>{client.api_key}</div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap hidden md:table-cell">
                     {editingId === client.id && editDraft ? (
                       <input
                         type="text"
                         value={editDraft.api_token}
                         onChange={(e) => setEditDraft((s) => (s ? { ...s, api_token: e.target.value } : s))}
-                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent px-3 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent px-2 py-1 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
                       />
                     ) : (
-                      <div className="text-sm text-gray-600 dark:text-gray-300 truncate max-w-[240px]" title={client.api_token}>{client.api_token}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300 font-mono truncate" title={client.api_token}>{client.api_token}</div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap hidden lg:table-cell">
                     <div className="text-sm text-gray-600 dark:text-gray-300">{formatDate(client.created_at)}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-600 dark:text-gray-300">{formatDate(client.updated_at)}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    {editingId === client.id ? (
-                      <>
-                        <button
-                          onClick={cancelEdit}
-                          className="mr-2 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={saveEdit}
-                          className="rounded-lg bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5"
-                        >
-                          Save
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button className="mr-2 rounded-lg border border-gray-200 dark:border-gray-700 px-3 py-1.5 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5">View</button>
-                        <button
-                          onClick={() => startEdit(client)}
-                          className="mr-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white px-3 py-1.5"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => removeClient(client.id)}
-                          className="rounded-lg bg-red-500 hover:bg-red-600 text-white px-3 py-1.5"
-                        >
-                          Remove
-                        </button>
-                      </>
-                    )}
+                  <td className="px-3 py-4 whitespace-nowrap text-right text-sm">
+                    <div className="flex items-center justify-end gap-2">
+                      {editingId === client.id ? (
+                        <>
+                          <button
+                            onClick={cancelEdit}
+                            className="rounded-lg border border-gray-200 dark:border-gray-700 px-2.5 py-1 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 text-xs"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={saveEdit}
+                            className="rounded-lg bg-brand-500 hover:bg-brand-600 text-white px-2.5 py-1 text-xs"
+                          >
+                            Save
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" /></svg>
+                          </button>
+                          <button
+                            onClick={() => startEdit(client)}
+                            className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" /></svg>
+                          </button>
+                          <button
+                            onClick={() => removeClient(client.id)}
+                            className="p-1 text-red-500 hover:text-red-700"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

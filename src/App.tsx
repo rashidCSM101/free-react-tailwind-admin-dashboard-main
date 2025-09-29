@@ -19,6 +19,7 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import Clients from "./pages/Clients";
+import Bot from "./pages/Bot";
 import { ProtectedRoute } from "./context/AuthContext";
 
 export default function App() {
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/blank" element={<Blank />} />
             <Route path="/clients" element={<Clients />} />
+            <Route path="/bot" element={<Bot />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />

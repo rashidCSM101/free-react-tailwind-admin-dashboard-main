@@ -1,4 +1,22 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import { useEffect } from 'react';
+import { useAppDispatch } from './store/hooks';
+import { loadUserFromStorage } from './store/slices/authSlice';
+
+// App initialization component
+function AppInitializer({ children }: { children: React.ReactNode }) {
+  const dispatch = useAppDispatch();
+  
+  useEffect(() => {
+    // Load user from localStorage on app start
+    console.log("🔄 Loading user from localStorage...");
+    dispatch(loadUserFromStorage());
+  }, [dispatch]);
+  
+  return <>{children}</>;
+}
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -20,14 +38,17 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import Clients from "./pages/Clients";
 import Bot from "./pages/Bot";
-import { ProtectedRoute } from "./context/AuthContext";
+import Crypto from "./pages/Crypto";
+import { ProtectedRoute, AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   return (
-    <>
-      <Router>
-        <ScrollToTop />
-        <Routes>
+    <Provider store={store}>
+      <AppInitializer>
+        <AuthProvider>
+          <Router>
+          <ScrollToTop />
+          <Routes>
           {/* Dashboard Layout (Protected) */}
           <Route
             element={
@@ -44,6 +65,7 @@ export default function App() {
             <Route path="/blank" element={<Blank />} />
             <Route path="/clients" element={<Clients />} />
             <Route path="/bot" element={<Bot />} />
+            <Route path="/crypto" element={<Crypto />} />
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
@@ -72,7 +94,9 @@ export default function App() {
           <Route path="/error-404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
-    </>
+          </Router>
+        </AuthProvider>
+      </AppInitializer>
+    </Provider>
   );
 }

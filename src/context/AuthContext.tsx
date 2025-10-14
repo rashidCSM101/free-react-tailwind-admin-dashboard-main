@@ -1,11 +1,12 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-
-// Simple hardcoded credentials. Change as needed.
-const DEFAULT_EMAIL = "admin@example.com";
-const DEFAULT_PASSWORD = "admin123";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { logout as logoutAction } from "../store/slices/authSlice";
 
 type AuthUser = {
+  id: number;
+  username: string;
   email: string;
+  full_name: string;
 };
 
 type AuthContextType = {
@@ -18,55 +19,29 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  // Get auth state from Redux instead of local state
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const remember = localStorage.getItem("auth_remember");
-    const stored = remember ? localStorage.getItem("auth_user") : null;
-    if (!remember) {
-      // Ensure no auto-login without explicit remember flag
-      localStorage.removeItem("auth_user");
-    }
-    if (remember && stored) {
-      try {
-        const parsed: AuthUser = JSON.parse(stored);
-        setUser(parsed);
-      } catch {
-        localStorage.removeItem("auth_user");
-        localStorage.removeItem("auth_remember");
-      }
-    }
-  }, []);
-
+  // Dummy login function - actual login happens in SignInForm with RTK Query
   const login = (email: string, password: string, remember: boolean = false) => {
-    const ok = email.trim() === DEFAULT_EMAIL && password === DEFAULT_PASSWORD;
-    if (ok) {
-      const u = { email };
-      setUser(u);
-      if (remember) {
-        localStorage.setItem("auth_user", JSON.stringify(u));
-        localStorage.setItem("auth_remember", "1");
-      } else {
-        localStorage.removeItem("auth_user");
-        localStorage.removeItem("auth_remember");
-      }
-      return true;
-    }
+    // This is handled by RTK Query in SignInForm now
     return false;
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem("auth_user");
-    localStorage.removeItem("auth_remember");
+    console.log("🚪 Logout called");
+    // Dispatch Redux logout action
+    dispatch(logoutAction());
+    console.log("✅ Logout action dispatched");
   };
 
   const value = useMemo<AuthContextType>(() => ({
     user,
-    isAuthenticated: !!user,
+    isAuthenticated,
     login,
     logout,
-  }), [user]);
+  }), [user, isAuthenticated]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -82,8 +57,14 @@ import { Navigate, useLocation } from "react-router";
 export const ProtectedRoute: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
+  
+  console.log("🔒 ProtectedRoute check:", { isAuthenticated, location: location.pathname });
+  
   if (!isAuthenticated) {
+    console.log("❌ Not authenticated, redirecting to /signin");
     return <Navigate to="/signin" replace state={{ from: location }} />;
   }
+  
+  console.log("✅ Authenticated, showing protected content");
   return <>{children}</>;
 };

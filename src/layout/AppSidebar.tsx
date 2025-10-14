@@ -54,6 +54,7 @@ const navItems: NavItem[] = [
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
+      { name: "Crypto Portfolio", path: "/crypto", pro: false },
       { name: "Clients", path: "/clients", pro: false },
       { name: "Bot", path: "/bot", pro: false },
       { name: "Blank Page", path: "/blank", pro: false },

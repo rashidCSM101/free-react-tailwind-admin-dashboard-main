@@ -1,36 +1,22 @@
 import { useState } from "react";
-
-interface Client {
-  id: number;
-  full_name: string;
-  api_key: string;
-  api_token: string;
-  created_at: string; // ISO string
-  updated_at: string; // ISO string
-}
-
-const initialClients: Client[] = [
-  {
-    id: 1,
-    full_name: "Eleanor Hayes",
-    api_key: "a3b0d7e2f91c4a4b9e8f",
-    api_token: "c2f65e2f94a7d91e7a83d4f21",
-    created_at: "2023-06-12T10:14:23Z",
-    updated_at: "2024-03-04T18:29:55Z",
-  },
-  {
-    id: 2,
-    full_name: "Marcus Turner",
-    api_key: "f41b8e29c7d94c01b3e7",
-    api_token: "a7e2b94c1d04f93b82c6e71a2",
-    created_at: "2022-11-02T09:21:11Z",
-    updated_at: "2023-12-17T20:47:33Z",
-  },
-];
+import { 
+  useGetClientsQuery, 
+  useCreateClientMutation, 
+  useUpdateClientMutation, 
+  useDeleteClientMutation,
+  type Client,
+  type CreateClientRequest
+} from "../store/api/clientsApi";
 
 export default function Clients() {
-  const [clients, setClients] = useState<Client[]>(initialClients);
-  const [newClient, setNewClient] = useState<Pick<Client, "full_name" | "api_key" | "api_token">>({
+  // RTK Query hooks
+  const { data: clients = [], isLoading, error } = useGetClientsQuery();
+  const [createClient] = useCreateClientMutation();
+  const [updateClient] = useUpdateClientMutation();
+  const [deleteClient] = useDeleteClientMutation();
+
+  // Local state for form management
+  const [newClient, setNewClient] = useState<CreateClientRequest>({
     full_name: "",
     api_key: "",
     api_token: "",
@@ -38,27 +24,24 @@ export default function Clients() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editDraft, setEditDraft] = useState<Pick<Client, "full_name" | "api_key" | "api_token"> | null>(null);
 
-  const nowIso = () => new Date().toISOString();
-
-  const addClient = () => {
+  const addClient = async () => {
     // Basic validation
     if (!newClient.full_name.trim() || !newClient.api_key.trim() || !newClient.api_token.trim()) return;
-    const nextId = clients.length ? Math.max(...clients.map((c) => c.id)) + 1 : 1;
-    const timestamp = nowIso();
-    const client: Client = {
-      id: nextId,
-      full_name: newClient.full_name,
-      api_key: newClient.api_key,
-      api_token: newClient.api_token,
-      created_at: timestamp,
-      updated_at: timestamp,
-    };
-    setClients((prev) => [client, ...prev]);
-    setNewClient({ full_name: "", api_key: "", api_token: "" });
+    
+    try {
+      await createClient(newClient).unwrap();
+      setNewClient({ full_name: "", api_key: "", api_token: "" });
+    } catch (error) {
+      console.error('Failed to create client:', error);
+    }
   };
 
-  const removeClient = (id: number) => {
-    setClients((prev) => prev.filter((c) => c.id !== id));
+  const removeClient = async (id: number) => {
+    try {
+      await deleteClient(id).unwrap();
+    } catch (error) {
+      console.error('Failed to delete client:', error);
+    }
   };
 
   const startEdit = (client: Client) => {
@@ -75,32 +58,55 @@ export default function Clients() {
     setEditDraft(null);
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     if (editingId === null || !editDraft) return;
-    setClients((prev) =>
-      prev.map((c) =>
-        c.id === editingId
-          ? {
-              ...c,
-              full_name: editDraft.full_name,
-              api_key: editDraft.api_key,
-              api_token: editDraft.api_token,
-              updated_at: nowIso(),
-            }
-          : c,
-      ),
-    );
-    setEditingId(null);
-    setEditDraft(null);
+    
+    try {
+      await updateClient({
+        id: editingId,
+        full_name: editDraft.full_name,
+        api_key: editDraft.api_key,
+        api_token: editDraft.api_token,
+      }).unwrap();
+      setEditingId(null);
+      setEditDraft(null);
+    } catch (error) {
+      console.error('Failed to update client:', error);
+    }
   };
 
   const formatDate = (iso: string) => new Date(iso).toLocaleString();
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+        <div className="text-red-800">
+          <h3 className="text-lg font-medium">Error loading clients</h3>
+          <p className="mt-1 text-sm">
+            {error && typeof error === 'object' && 'data' in error 
+              ? String(error.data) 
+              : 'An error occurred while fetching clients.'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Clients</h2>
-        <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">Manage your clients. This is a sample page you can extend with real data.</p>
+        <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">Manage your clients with real-time data synchronization.</p>
       </div>
 
       {/* Add Client Form */}
